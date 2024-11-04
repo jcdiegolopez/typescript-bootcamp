@@ -1,0 +1,22 @@
+{
+  "name": "todolist",
+  "author": {
+    "name": "Diego Lopez",
+    "email": "dijolopez@gmail.com"
+  },
+  "private": true,
+  "version": "0.0.2",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "todolist": "file:"
+  }
+}
