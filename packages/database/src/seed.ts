@@ -14,7 +14,7 @@ const colors = [
     'orange',
     'pink',
     'brown',
-]
+];
 
 async function main() {
   console.log("Seeding database...");
@@ -39,8 +39,9 @@ async function main() {
       return prisma.product.create({
         data: {
           name: faker.commerce.productName(),
-          descripton: faker.commerce.productDescription(),
+          description: faker.commerce.productDescription(),
           image: faker.image.imageUrl(),
+          price: faker.datatype.number({ min: 1000, max: 5000 }), // Precio del producto
           collections: {
             connect: randomCollections.map((collection) => ({ id: collection.id })),
           },
@@ -49,7 +50,7 @@ async function main() {
     })
   );
 
-  // Crear 5 opciones con 15 valores de opciones y asociarlas a productos
+  // Crear 5 opciones con valores y asociarlas a productos
   const options = await Promise.all(
     Array.from({ length: 5 }, async (_, optionIndex) => {
       const randomProduct = faker.helpers.arrayElement(products);
@@ -85,9 +86,6 @@ async function main() {
           name: faker.commerce.productMaterial(),
           image: faker.image.imageUrl(),
           description: faker.lorem.sentence(),
-          price: faker.datatype.number({ min: 1000, max: 5000 }),
-          stock: faker.datatype.number({ min: 10, max: 100 }),
-          sku: faker.datatype.uuid(),
           product: { connect: { id: randomProduct.id } },
           optionValues: {
             connect: randomOptionValues.map((value) => ({ id: value.id })),
@@ -102,7 +100,7 @@ async function main() {
 
 main()
   .catch((e) => {
-   throw e;
+    console.error(e);
   })
   .finally(async () => {
     await prisma.$disconnect();

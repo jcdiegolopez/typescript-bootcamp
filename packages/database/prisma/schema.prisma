@@ -17,9 +17,10 @@ datasource db {
 model Product{
   id  Int     @id @default(autoincrement())
   name  String
-  descripton String?
+  description String?
   image String?
   variants Variant[]
+  price Int
   options Option[]
   collections Collection[]
   createdAt DateTime @default(now())
@@ -31,9 +32,6 @@ model Variant{
   name String
   image String?
   description String?
-  price Int
-  stock Int
-  sku String
   optionValues OptionValue[]
   productId Int
   product Product @relation(fields: [productId], references: [id])

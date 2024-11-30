@@ -1,104 +1,125 @@
-import { Router } from "express";
-import { client } from "../lib/prismaClient";
+import { Router, Request, Response } from "express";
+import { ProductsService } from "../services/ProductServices";
 
 const router: Router = Router();
 
-router.post('/products', async (req, res) => {
-    const { name, description, image } = req.body;
-  
-    try {
-      const newProduct = await client.product.create({
-        data: {
-          name,
-          descripton: description,
-          image,
-        },
-      });
-      res.status(201).json(newProduct);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error creating product' + error });
-    }
+const productService = new ProductsService();
+
+/**
+ * GET /products/search
+ * Buscar productos con filtros y ordenamientos.
+ * Query Parameters:
+ * - searchText: texto para buscar en nombre y descripción.
+ * - collectionId: ID de la colección para filtrar productos.
+ * - sortBy: "asc" o "desc" para ordenar por precio.
+ */
+router.get('/products/search', async (req: Request, res: Response) => {
+  try {
+    const { searchText, collectionId, sortBy } = req.query;
+    
+    const products = await productService.searchProducts(
+      searchText as string,
+      collectionId ? parseInt(collectionId as string, 10) : undefined,
+      sortBy as 'asc' | 'desc'
+    );
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error searching products' });
+  }
 });
 
-router.get('/products', async (_, res) => {
-    try {
-        const products = await client.product.findMany({
-        include: {
-            variants: true,
-            options: true,
-            collections: true,
-        },
-        });
-        res.json(products);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error fetching products' });
+/**
+ * GET /products/:id
+ * Obtener detalles de un producto.
+ */
+router.get('/products/:id', async (req: Request, res: Response) => {
+  try {
+    const productId = parseInt(req.params.id, 10);
+    
+    const product = await productService.getProductDetails(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
     }
+
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching product details' });
+  }
 });
 
-router.get('/products/:id', async (req, res) => {
-    const { id } = req.params;
+/**
+ * POST /products
+ * Crear un nuevo producto.
+ * Body:
+ * - name: Nombre del producto.
+ * - description: Descripción del producto.
+ * - image: URL de la imagen del producto.
+ * - price: Precio del producto.
+ */
+router.post('/products', async (req: Request, res: Response) => {
+  try {
+    const { name, description, image, price } = req.body;
 
-    try {
-        const product = await client.product.findUnique({
-        where: { id: parseInt(id, 10) },
-        include: {
-            variants: true,
-            options: true,
-            collections: true,
-        },
-        });
+    // Llamada al servicio para crear un nuevo producto
+    const newProduct = await productService.createProduct(name, description, image, price);
 
-        if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
-        }
-
-        res.json(product);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error fetching product' });
-    }
+    res.status(201).json(newProduct);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error creating product' });
+  }
 });
 
-router.put('/products/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, description, image } = req.body;
-  
-    try {
-      const updatedProduct = await client.product.update({
-        where: { id: parseInt(id, 10) },
-        data: {
-          name,
-          descripton: description,
-          image,
-        },
-      });
-  
-      res.json(updatedProduct);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error updating product' });
-    }
+/**
+ * PUT /products/:id
+ * Actualizar un producto existente.
+ * Params:
+ * - id: ID del producto a actualizar.
+ * Body:
+ * - name: Nombre del producto.
+ * - description: Descripción del producto.
+ * - image: URL de la imagen del producto.
+ * - price: Precio del producto.
+ */
+router.put('/products/:id', async (req: Request, res: Response) => {
+  try {
+    const { name, description, image, price } = req.body;
+    const productId = req.params.id;
+
+    // Llamada al servicio para actualizar el producto
+    const updatedProduct = await productService.updateProduct(productId, name, description, image, price);
+
+    res.json(updatedProduct);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error updating product' });
+  }
 });
 
-router.delete('/products/:id', async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      await client.product.delete({
-        where: { id: parseInt(id, 10) },
-      });
-  
-      res.status(204).send(); 
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error deleting product' });
-    }
-  });
-  
-  
-  
-  
+/**
+ * DELETE /products/:id
+ * Eliminar un producto.
+ * Params:
+ * - id: ID del producto a eliminar.
+ */
+router.delete('/products/:id', async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id;
+
+    // Llamada al servicio para eliminar el producto
+    await productService.deleteProduct(productId);
+
+    res.status(204).send(); // No content
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error deleting product' });
+  }
+});
+
+
 
 export default router;
