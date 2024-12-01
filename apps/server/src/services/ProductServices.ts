@@ -1,4 +1,4 @@
-import {  ProductDTO } from "@repo/schemas";
+import {  ProductDetailDTO, ProductDTO } from "@repo/schemas";
 import { client } from "../lib/prismaClient";
 
 
@@ -51,7 +51,7 @@ export class ProductsService {
     }));
   }
 
-    async getProductDetails(productId: number) {
+    async getProductDetails(productId: number) : Promise<ProductDetailDTO | null> {
       const product = await client.product.findUnique({
         where: { id: productId },
         include: {

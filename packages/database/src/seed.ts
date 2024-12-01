@@ -4,16 +4,16 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 const colors = [
-    'red',
-    'blue',
-    'green',
-    'yellow',
-    'black',
-    'white',
-    'purple',
-    'orange',
-    'pink',
-    'brown',
+  'DEM',
+  'SEM',
+  'LAT',
+  'FOL',
+  'JON',
+  'SUN',
+  'TEL',
+  'FAN',
+  'ZAT',
+  'JYL',
 ];
 
 async function main() {
@@ -31,7 +31,7 @@ async function main() {
     )
   );
 
-  // Crear 15 productos asociados a colecciones
+  // Crear 15 productos asociados a colecciones, cada uno con una imagen diferente
   const products = await Promise.all(
     Array.from({ length: 15 }, async () => {
       const randomCollections = faker.helpers.arrayElements(collections, 2); // Asociar 2 colecciones al azar
@@ -40,7 +40,7 @@ async function main() {
         data: {
           name: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
-          image: faker.image.imageUrl(),
+          image: faker.image.imageUrl(640, 480, 'technics', true), // Imagen única para cada producto
           price: faker.datatype.number({ min: 1000, max: 5000 }), // Precio del producto
           collections: {
             connect: randomCollections.map((collection) => ({ id: collection.id })),
@@ -72,7 +72,7 @@ async function main() {
     })
   );
 
-  // Crear 20 variantes y asociarlas a productos y valores de opciones
+  // Crear 20 variantes y asociarlas a productos y valores de opciones, con imágenes diferentes
   await Promise.all(
     Array.from({ length: 20 }, async () => {
       const randomProduct = faker.helpers.arrayElement(products);
@@ -84,7 +84,7 @@ async function main() {
       return prisma.variant.create({
         data: {
           name: faker.commerce.productMaterial(),
-          image: faker.image.imageUrl(),
+          image: faker.image.imageUrl(640, 480, 'fashion', true), // Imagen única para cada variante
           description: faker.lorem.sentence(),
           product: { connect: { id: randomProduct.id } },
           optionValues: {

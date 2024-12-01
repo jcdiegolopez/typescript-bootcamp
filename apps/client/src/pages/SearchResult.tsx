@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 import axios from "axios";
 import { ProductDTO } from "@repo/schemas";
 import ProductCard from "../components/ProductCard";
-import SkeletonCard from "../components/CardSkeleton";
+import SkeletonCard from "../components/Skeletons/CardSkeleton";
 
 function SearchResult() {
   const [products, setProducts] = useState<ProductDTO[]>([]);
@@ -48,7 +48,7 @@ function SearchResult() {
   }, [location.search]);
 
   return (
-    <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
+    <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 container mx-auto">
       {loading
         ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
         : products.length > 0

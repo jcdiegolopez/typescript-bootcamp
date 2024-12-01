@@ -8,7 +8,7 @@ function ProductCard(product: ProductDTO) {
     const navigate = useNavigate();
 
     const handleCardClick = (productId: number) => {
-        navigate(`product/${productId}`);
+        navigate(`/product/${productId}`);
         };
 
 
