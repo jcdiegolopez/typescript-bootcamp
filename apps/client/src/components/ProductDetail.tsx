@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
 import { ProductDetailDTO } from "@repo/schemas";
 import SkeletonLoader from "./Skeletons/ProductSkeleton";
+import { formatPrice } from '../utils/index';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -109,7 +110,7 @@ function ProductDetails() {
           {/* Details Section */}
           <div className="md:col-span-1">
             <h1 className="text-3xl font-bold">{product.name}</h1>
-            <p className="text-xl mt-2 text-blue-400 font-semibold">${product.price}</p>
+            <p className="text-xl mt-2 text-blue-400 font-semibold">{formatPrice(product.price)}</p>
             <p className="mt-4 text-sm text-gray-400">{product.description}</p>
 
             {/* Options */}
