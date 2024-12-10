@@ -35,11 +35,22 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'setup',
+      testMatch: /global\.setup\.ts/,
+      teardown: 'cleanup',
+    },
+
+    {
+      name: 'cleanup',
+      testMatch: /global\.cleanup\.ts/,
+    },
+
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
+    /*{
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
@@ -47,7 +58,7 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
+    },*/
 
     /* Test against mobile viewports. */
     // {
@@ -71,9 +82,11 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+     command: 'pnpm exec turbo start',
+     url: 'http://localhost:4173',
+     reuseExistingServer: true,
+     cwd: '../../',
+     stdout: 'pipe',
+  },
 });
