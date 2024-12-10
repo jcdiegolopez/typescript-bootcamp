@@ -115,6 +115,7 @@ function ProductDetails() {
 
             {/* Options */}
             {product.variants.map((variant) => (
+              
               <div key={variant.id} className="mt-6">
                 <h2 className="text-base font-medium mb-2">{variant.name}</h2>
                 <div className="flex gap-2 flex-wrap">

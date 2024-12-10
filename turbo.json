@@ -1,6 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "test": {
+      
+    },
     "build": {
       "dependsOn": ["^build", "^db:generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -32,6 +35,12 @@
       "cache": false
     },
     "db:seed": {
+      "cache": false
+    },
+    "e2e:run": {
+      "cache": false
+    },
+    "e2e:report": {
       "cache": false
     }
 
