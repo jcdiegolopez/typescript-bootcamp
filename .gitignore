@@ -18,7 +18,6 @@ dist
 dist-ssr
 .turbo
 .cache
-server/dist
 public/dist
 
 # Editor directories and files
