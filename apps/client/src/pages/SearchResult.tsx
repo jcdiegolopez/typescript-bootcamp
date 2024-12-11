@@ -7,7 +7,7 @@ import SkeletonCard from "../components/Skeletons/CardSkeleton";
 
 function SearchResult() {
   const [products, setProducts] = useState<ProductDTO[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const location = useLocation();
   const apiUrl = import.meta.env.VITE_API_URL;
 
