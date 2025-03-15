@@ -1,8 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "test": {
+      
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "^db:generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
@@ -10,6 +13,7 @@
       "dependsOn": ["^lint"]
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
@@ -17,6 +21,28 @@
       "dependsOn": ["build"],
       "cache": false,
       "persistent": true
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:start": {
+      "cache": false
+    },
+    "db:stop": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "e2e:run": {
+      "cache": false
+    },
+    "e2e:report": {
+      "cache": false
     }
+
   }
 }

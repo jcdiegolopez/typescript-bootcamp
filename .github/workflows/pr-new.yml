@@ -1,0 +1,66 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    services:
+      postgres:
+        image: postgres:16.4
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user -d db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9.8.0
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20.17.0
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Install Playwright browsers
+      run: pnpm dlx playwright install --with-deps
+
+    - name: Set DATABASE_URL environment variable
+      run: echo "DATABASE_URL=postgresql://user:password@127.0.0.1:5432/db?schema=public" > ./packages/database/.env
+
+    - name: Run database migrations
+      run: |
+        pnpm exec turbo db:migrate
+
+    #- name: Run unit tests
+    # run: pnpm exec turbo test
+
+    - name: Run E2E tests
+      run: pnpm exec turbo e2e:run
+
+    - name: Upload Playwright reports
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
