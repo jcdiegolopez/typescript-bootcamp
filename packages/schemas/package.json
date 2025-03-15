@@ -1,0 +1,22 @@
+{
+  "name": "@repo/schemas",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && tsc-alias"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.0.0",
+    "typescript": "^5.3.3",
+    "tsx": "^4.17.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
+  },
+  "exports": {
+    "types": "./src/index.ts",
+    "default": "./dist/index.ts"
+  }
+}
